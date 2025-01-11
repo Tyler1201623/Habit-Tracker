@@ -3,6 +3,7 @@ class HabitTracker {
         this.habits = JSON.parse(localStorage.getItem('habits')) || [];
         this.theme = localStorage.getItem('theme') || 'light';
         this.currentView = localStorage.getItem('view') || 'grid';
+        this.activeModal = null;
         this.init();
     }
 
@@ -14,6 +15,7 @@ class HabitTracker {
         this.setupModals();
         this.setupViewControls();
         this.setupFilters();
+        this.setupSettings();
         
         window.addEventListener('resize', () => this.handleResize());
         window.addEventListener('orientationchange', () => {
@@ -33,11 +35,13 @@ class HabitTracker {
         });
 
         document.getElementById('showStats').addEventListener('click', () => {
-            this.showStatsModal();
+            document.getElementById('statsModal').style.display = 'flex';
+            this.updateStats();
         });
 
         document.getElementById('showSettings').addEventListener('click', () => {
-            this.showSettingsModal();
+            document.getElementById('settingsModal').style.display = 'flex';
+            this.loadSettings();
         });
 
         document.getElementById('searchHabits').addEventListener('input', (e) => {
@@ -51,24 +55,54 @@ class HabitTracker {
         document.getElementById('sortHabits').addEventListener('change', () => {
             this.sortHabits();
         });
-    }
 
-    setupModals() {
+        // Close buttons
         document.querySelectorAll('.close-modal').forEach(button => {
             button.addEventListener('click', () => {
-                document.querySelectorAll('.modal').forEach(modal => {
+                const modal = button.closest('.modal');
+                if (modal) {
                     modal.style.display = 'none';
-                });
+                }
             });
         });
 
+        // Click outside to close
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 e.target.style.display = 'none';
             }
         });
     }
+    setupModals() {
+        // Close button functionality
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    if (modal.id === 'settingsModal') {
+                        this.loadSettings();
+                    }
+                }
+            });
+        });
 
+        // Click outside modal to close
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+    }
     setupViewControls() {
         document.querySelectorAll('.view-button').forEach(button => {
             button.addEventListener('click', () => {
@@ -79,6 +113,34 @@ class HabitTracker {
                 this.renderHabits();
             });
         });
+    }
+
+    toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        
+        if (this.activeModal === modal) {
+            this.closeModals();
+            return;
+        }
+
+        this.closeModals();
+        modal.classList.add('visible');
+        this.activeModal = modal;
+
+        if (modalId === 'statsModal') {
+            this.updateStats();
+        }
+    }
+
+    showStatsModal() {
+        document.getElementById('statsModal').style.display = 'flex';
+    }
+
+    closeModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.classList.remove('visible');
+        });
+        this.activeModal = null;
     }
 
     handleViewChange() {
@@ -296,10 +358,6 @@ class HabitTracker {
         document.getElementById('bestStreak').textContent = `${bestStreak} days`;
     }
 
-    showStatsModal() {
-        document.getElementById('statsModal').style.display = 'flex';
-    }
-
     updateViewControls() {
         document.querySelectorAll('.view-button').forEach(button => {
             button.classList.toggle('active', button.dataset.view === this.currentView);
@@ -393,6 +451,68 @@ class HabitTracker {
         return calendar;
     }
 
+    setupSettings() {
+        document.getElementById('notificationToggle').addEventListener('change', (e) => {
+            localStorage.setItem('notifications', e.target.checked);
+            if (e.target.checked) {
+                this.requestNotificationPermission();
+            }
+        });
+
+        document.getElementById('reminderTime').addEventListener('change', (e) => {
+            localStorage.setItem('reminderTime', e.target.value);
+        });
+
+        document.getElementById('exportData').addEventListener('click', () => {
+            this.exportHabitData();
+        });
+
+        document.getElementById('resetData').addEventListener('click', () => {
+            this.resetAllData();
+        });
+    }
+
+    loadSettings() {
+        document.getElementById('notificationToggle').checked = 
+            localStorage.getItem('notifications') === 'true';
+        document.getElementById('reminderTime').value = 
+            localStorage.getItem('reminderTime') || '09:00';
+    }
+
+    exportHabitData() {
+        const data = {
+            habits: this.habits,
+            settings: {
+                theme: this.theme,
+                notifications: localStorage.getItem('notifications'),
+                reminderTime: localStorage.getItem('reminderTime')
+            }
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `habit-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+    }
+
+    resetAllData() {
+        if (confirm('Are you sure? This will delete all your habits and settings.')) {
+            localStorage.clear();
+            this.habits = [];
+            this.renderHabits();
+            this.updateStats();
+            this.showNotification('All data has been reset', 'warning');
+        }
+    }
+
+    requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission();
+        }
+    }
+
     handleResize() {
         this.renderHabits();
     }
@@ -406,3 +526,4 @@ class HabitTracker {
 }
 
 const habitTracker = new HabitTracker();
+

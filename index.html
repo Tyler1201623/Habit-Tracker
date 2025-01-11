@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="description" content="Track your daily habits with this responsive habit tracker">
     <meta name="theme-color" content="#6366f1">
     <title>Habit Flow | Track Your Success</title>
@@ -21,6 +21,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon" href="icon-192x192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 <body>
     <header class="glass-morphism">
@@ -67,10 +69,10 @@
                 </button>
             </div>
         </form>
-          <div class="view-controls">
-              <button class="view-button active" data-view="grid">Grid View</button>
-              <button class="view-button" data-view="list">List View</button>
-          </div>
+        <div class="view-controls">
+            <button class="view-button active" data-view="grid">Grid View</button>
+            <button class="view-button" data-view="list">List View</button>
+        </div>
         <div class="filters">
             <input type="text" id="searchHabits" placeholder="Search habits..." class="search-input">
             <select id="categoryFilter" class="category-filter">
@@ -91,6 +93,7 @@
         <div id="habitsContainer" class="habits-grid"></div>
     </main>
 
+    <!-- Stats Modal -->
     <div id="statsModal" class="modal">
         <div class="modal-content glass-morphism">
             <h2>Your Progress</h2>
@@ -106,6 +109,32 @@
                 <div class="stat-card">
                     <h3>Best Streak</h3>
                     <p id="bestStreak">0 days</p>
+                </div>
+            </div>
+            <button class="close-modal">Close</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content glass-morphism">
+            <h2>Settings</h2>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label for="notificationToggle">Enable Notifications</label>
+                    <input type="checkbox" id="notificationToggle">
+                </div>
+                <div class="setting-item">
+                    <label for="reminderTime">Daily Reminder Time</label>
+                    <input type="time" id="reminderTime">
+                </div>
+                <div class="setting-item">
+                    <label for="dataExport">Export Data</label>
+                    <button id="exportData" class="settings-button">Export</button>
+                </div>
+                <div class="setting-item">
+                    <label for="resetData">Reset All Data</label>
+                    <button id="resetData" class="settings-button danger">Reset</button>
                 </div>
             </div>
             <button class="close-modal">Close</button>
