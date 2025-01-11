@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Track your daily habits with this responsive habit tracker">
+    <meta name="theme-color" content="#6366f1">
+    <title>Habit Flow | Track Your Success</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+</head>
+<body>
+    <header class="glass-morphism">
+        <div class="logo-container">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+            <h1>Habit Flow</h1>
+        </div>
+        <nav class="header-nav">
+            <button class="nav-button" id="showStats">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 6.5l-1.5-1.5-8.5 8.5-4-4-7 7V19h20z"></path>
+                </svg>
+                <span>Stats</span>
+            </button>
+            <button class="nav-button" id="showSettings">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"></path>
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path>
+                </svg>
+                <span>Settings</span>
+            </button>
+            <button id="themeToggle" class="theme-toggle">🌙</button>
+        </nav>
+    </header>
+
+    <main>
+        <form id="habitForm" class="glass-morphism">
+            <div class="input-container">
+                <input type="text" id="habitInput" placeholder="Enter new habit..." required>
+                <select id="habitCategory" class="habit-category">
+                    <option value="health">Health</option>
+                    <option value="productivity">Productivity</option>
+                    <option value="learning">Learning</option>
+                    <option value="fitness">Fitness</option>
+                    <option value="other">Other</option>
+                </select>
+                <button type="submit" class="add-button">
+                    <span>Add Habit</span>
+                    <svg class="plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+          <div class="view-controls">
+              <button class="view-button active" data-view="grid">Grid View</button>
+              <button class="view-button" data-view="list">List View</button>
+          </div>
+        <div class="filters">
+            <input type="text" id="searchHabits" placeholder="Search habits..." class="search-input">
+            <select id="categoryFilter" class="category-filter">
+                <option value="all">All Categories</option>
+                <option value="health">Health</option>
+                <option value="productivity">Productivity</option>
+                <option value="learning">Learning</option>
+                <option value="fitness">Fitness</option>
+                <option value="other">Other</option>
+            </select>
+            <select id="sortHabits" class="sort-select">
+                <option value="name">Sort by Name</option>
+                <option value="streak">Sort by Streak</option>
+                <option value="progress">Sort by Progress</option>
+            </select>
+        </div>
+
+        <div id="habitsContainer" class="habits-grid"></div>
+    </main>
+
+    <div id="statsModal" class="modal">
+        <div class="modal-content glass-morphism">
+            <h2>Your Progress</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Habits</h3>
+                    <p id="totalHabits">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Completion Rate</h3>
+                    <p id="completionRate">0%</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Best Streak</h3>
+                    <p id="bestStreak">0 days</p>
+                </div>
+            </div>
+            <button class="close-modal">Close</button>
+        </div>
+    </div>
+
+    <footer class="glass-morphism">
+        <p>Made with ❤️ by Tyler Keesee</p>
+        <div class="social-links">
+            <a href="https://github.com/Tyler1201623?tab=repositories" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://tyler1201623.github.io/Portfolio/" target="_blank" rel="noopener">Portfolio</a>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>
